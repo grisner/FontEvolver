@@ -1,6 +1,5 @@
 var React = require('react');
 
-
 var Character = React.createClass({
   propTypes: {
     id: React.PropTypes.string,
@@ -16,33 +15,64 @@ var Character = React.createClass({
   },
 
   drawImage: function() {
-    element = document.getElementById(id);
+    var element = this.element;
     c = element.getContext("2d");
 
     // read the width and height of the canvas
     width = element.width;
     height = element.height;
 
-
     // create a new pixel array
     imageData = c.createImageData(width, height);
 
-    for(i=0; i < 10000; i++) {
-      x = Math.random() * width | 0; // |0 to truncate to Int32
-        y = Math.random() * height | 0;
-        r = Math.random() * 256 | 0;
-        g = Math.random() * 256 | 0;
-        b = Math.random() * 256 | 0;
+    if(this.initialImage) {
+      var img = this.initialImage;
+      this.initialImage = null;
+    }
+    else {
+      var img = this.props.image;
+    }
+
+    for(i=0; i < 40000; i+=3) {
+      x = i%width | 0; // |0 to truncate to Int32
+        y = (i-width)/width | 0;
+        r = img[i] | 0;
+        g = img[i+1] | 0;
+        b = img[i+2] | 0;
         setPixel(imageData, x, y, r, g, b, 255); // 255 opaque
     }
 
     c.putImageData(imageData, 0, 0); // at coords 0,0*/
-    
+  },
+
+  createRandomData: function(sizeX, sizeY) {
+    var arr = new Array(sizeX*sizeY*3);
+    var values = sizeX*sizeY*3;
+
+    for(i=0; i < values; i++) {
+      arr[i] = Math.random() * 256 | 0;
+    }
+
+    return arr;
+  },
+
+  getInitialState() {
+    console.log('initializing Character ' + this.props.id);
+    this.initialImage = this.createRandomData(100, 100);
+    //this.element = <canvas id={this.props.id} height="100" width="100">test</canvas>;
+    this.element = <p>{this.props.id}</p>;
+    return null;
   },
 
   render: function() {
-    return (<p>{this.props.image}</p>);
-  }
+
+    //this.drawImage();
+
+    return (
+      <div>{this.element}</div>
+    );
+
+  },
 });
 
 var Individual = React.createClass({
@@ -55,7 +85,7 @@ var Individual = React.createClass({
     console.log(this.props.Characters[0])
     return (
       <div>
-        <Character image={this.props.Characters}></Character>
+        <Character id="2.2" image={this.props.Characters}></Character>
       </div>
     );
   }
