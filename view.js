@@ -1,7 +1,9 @@
 var React = require('react');
-var View = require('./view.jsx');
+var Individual = require('./individ.jsx');
+console.log("view.js");
 
-var viewFromViewJSX = JSON.parse(document.getElementById('initial-data').getAttribute('data-json'));
+var viewFromIndexJS = JSON.parse(document.getElementById('initial-data').getAttribute('data-json'));
+//var chars = [[1,2],[2,3],[3,4]];
 React.render(
-	<View view={viewFromViewJSX} />, document.getElementById('container')
+	<Individual chars={viewFromIndexJS}/>, document.getElementById('container')
 );

@@ -1,0 +1,26 @@
+{
+  "name": "FontEvolver",
+  "version": "0.1.0",
+  "description": "Evolve a font",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "keywords": [
+    "online"
+  ],
+  "author": "Mikael Nilsson",
+  "license": "GPL3",
+  "homepage": "",
+  "dependencies": {
+    "browserify": "^14.4.0",
+    "express": "^4.0.0",
+    "node-jsx": "^0.13.3",
+    "react": "^16.0.0"
+  }
+}
