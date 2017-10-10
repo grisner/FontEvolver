@@ -7,9 +7,9 @@ var app = express();
 jsx.install();
 
 
-var Individual = require('./Individual.jsx');
+var Generation = require('./Individual.jsx');
 
-app.use('/createIndividuals', function(req, res) {
+app.use('/createGeneration', function(req, res) {
   res.setHeader('content-type', 'application/javascript');
   browserify('./app.js', {
     debug: true
@@ -30,18 +30,18 @@ app.use('/', function(req, res) {
       React.DOM.div({
         id: 'container',
         dangerouslySetInnerHTML: {
-          __html: React.renderToString(React.createElement(Individual, {
-            Characters: chars
+          __html: React.renderToString(React.createElement(Generation, {
+            genNum: "1"
           }))
         }
       }),
       React.DOM.script({
         'id': 'initial-data',
         'type': 'text/plain',
-        'data-json': JSON.stringify(chars)
+        'data-json': JSON.stringify("1")
       }),
       React.DOM.script({
-        src: '/createIndividuals'
+        src: '/createGeneration'
       })
     )
   ));
