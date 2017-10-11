@@ -17,9 +17,9 @@ app.use('/createGeneration', function(req, res) {
   .transform('reactify')
   .bundle()
   .pipe(res);
-
-  
 });
+
+
 
 app.use('/', function(req, res) {
 
@@ -53,3 +53,6 @@ var server = app.listen(80, function() {
   var addr = server.address();
   console.log('Listening @ http://%s:%d', addr.address, addr.port);
 });
+
+// TO RUN DOCKER 
+// docker run -v $(pwd):/FontEvolver -p 80:80 -it node /bin/bash
