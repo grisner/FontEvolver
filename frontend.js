@@ -1,7 +1,4 @@
-
-
-
-setPixel= function (imageData, x, y, r, g, b, a) {
+setPixel=function(imageData, x, y, r, g, b, a) {
     var index = (x + y * imageData.width) * 4;
     imageData.data[index + 0] = r;
     imageData.data[index + 1] = g;
@@ -9,33 +6,82 @@ setPixel= function (imageData, x, y, r, g, b, a) {
     imageData.data[index + 3] = a;
 };
 
-exports.drawImages= function() {
-        // is run in frontend
+/*Get=function(URL) {
+    var xhttp = new XMLHttpRequest();
+    xhttp.open("GET", URL, false);
+    xhttp.setRequestHeader("Content-type", "application/json");
+    xhttp.send();
+    var response = JSON.parse(xhttp.responseText);
+    return response;
+};*/
 
-        console.log('drawImages');
+Get=function(URL, callbackFn) {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = callbackFn;
+    xhttp.open("GET", URL, true);
+    xhttp.send();
+};
 
-        var elements = document.getElementsByTagName('canvas');
-        console.log(elements.length);
+exports.drawImages = function() {
+    // is run in frontend
+    console.log('drawImages');
 
-        //for(i=0; i < elements.length; i++) {
-        for(var element in elements) {
+    var elements = document.getElementsByTagName('canvas');
+    console.log(elements.length);
 
-            var c = elements[element].getContext('2d');
 
-            // create a new pixel array
-            imageData = c.createImageData(100, 100);
+    for(el=0; el < elements.length; el++) {
+        
+    // for (var el in elements) {
+        var element = elements[el];
+        var ID = element.id.split('.')[2]
+        var charID = element.id.split('.')[3]
 
-            // Get data from the right character
-            for(i=1;i < 99; i++) {
-                this.setPixel(imageData, i,i,0,0,0,255);            
+        // Get data from the right character
+        console.log("drawing: " + ID + ":" + charID);
+        var url = "http://127.0.0.1/GetCharacterImage&" + ID + "&" + charID + "&" + el
+
+        Get(url, function(data){
+
+            try{
+                response = JSON.parse(data.target.responseText);
+            }
+            catch(e) {
+                console.error(e)
+                window.t = data.target
+                console.log(data.target.response)
             }
 
+            element = elements[response.el];
+            var c = element.getContext('2d');
+            var width = c.canvas.width;
+            var height = c.canvas.height;
+
+            // create a new pixel array
+            var imageData = c.createImageData(width, height);
+
+            window.response = response;
+            var image = response.image;
+
+            for(i=0;i < image.length; i+=3) {
+                x = i % width;
+                y = parseInt(i/width);
+                r = image[i];
+                g = image[i+1];
+                b = image[i+2];
+                a = 255;
+                setPixel(imageData, x, y, r, g, b,a);
+                
+            }
             c.putImageData(imageData, 0, 0); // at coords 0,0
+            console.log("drawn: " + ID + ":" + charID);
+        });
 
-        }
-
-
-        //const ctx = element.getContext('2d');
-//        ctx.fillRect(0,0, 100, 100);
-    
+        
+        
+    }
 };
+
+
+
+

@@ -6,6 +6,10 @@ var app = express();
 jsx.install();
 
 var Generation = require('./Individual.jsx');
+var gen = React.createElement(Generation, {
+                id: "gen1",
+                genNum: "1"
+            });
 
 app.use('/createGeneration', function (req, res) {
     res.setHeader('content-type', 'application/javascript');
@@ -17,8 +21,30 @@ app.use('/createGeneration', function (req, res) {
         .pipe(res);
 });
 
-app.get('/getCharacterImage&:characterID', function (req, res) {
+app.use('/runEvolution', function(req, res) {
+    
+});
 
+app.use('/stopEvolution', function(req, res) {
+
+});
+
+app.get('/getCharacterImage&:individualID&:characterID&:el', function (req, res) {
+    console.log('index.js.getCharacterImage ' + req.params.individualID + ',' + req.params.characterID);
+    
+    var ind = gen.props.Individuals[req.params.individualID];
+    var char = ind.props.Characters[req.params.characterID];
+    
+    var result = {
+        'image': char.props.image,
+        'el': req.params.el,
+        'individualID': req.params.individualID,
+        'characterID': req.params.characterID
+        
+    };
+    res.send(result);
+    
+    
 });
 
 app.use('/', function (req, res) {
@@ -27,9 +53,7 @@ app.use('/', function (req, res) {
     res.end(React.renderToStaticMarkup(React.DOM.body(null, React.DOM.div({
         id: 'container',
         dangerouslySetInnerHTML: {
-            __html: React.renderToString(React.createElement(Generation, {
-                genNum: "1"
-            }))
+            __html: React.renderToString(gen)
         }
     }), React.DOM.script({
         'id': 'initial-data',
