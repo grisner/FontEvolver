@@ -4,21 +4,16 @@ var React = require('react');
 var jsx = require('node-jsx');
 var app = express();
 jsx.install();
+var evol = require('./evolution.js');
+
+
+
+
 
 var Generation = require('./Individual.jsx');
 var gen = React.createElement(Generation, {
-                id: "gen1",
-                genNum: "1"
-            });
-
-app.use('/createGeneration', function (req, res) {
-    res.setHeader('content-type', 'application/javascript');
-    browserify('./app.js', {
-        debug: true
-    })
-        .transform('reactify')
-        .bundle()
-        .pipe(res);
+    id: "gen1",
+    genNum: "1"
 });
 
 app.use('/runEvolution', function(req, res) {
@@ -42,13 +37,22 @@ app.get('/getCharacterImage&:individualID&:characterID&:el', function (req, res)
         'characterID': req.params.characterID
         
     };
-    res.send(result);
-    
-    
+    res.send(result); 
+});
+
+// Frontend
+
+app.use('/createGeneration', function (req, res) {
+    res.setHeader('content-type', 'application/javascript');
+    browserify('./app.js', {
+        debug: true
+    })
+        .transform('reactify')
+        .bundle()
+        .pipe(res);
 });
 
 app.use('/', function (req, res) {
-    //var chars = new Array([1,2],[2,3],[3,4]);
     res.setHeader('Content-Type', 'text/html');
     res.end(React.renderToStaticMarkup(React.DOM.body(null, React.DOM.div({
         id: 'container',
@@ -63,6 +67,7 @@ app.use('/', function (req, res) {
         src: '/createGeneration'
     }))));
 });
+
 var server = app.listen(80, function () {
     var addr = server.address();
     console.log('Listening @ http://%s:%d', addr.address, addr.port);

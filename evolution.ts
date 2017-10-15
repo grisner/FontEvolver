@@ -5,6 +5,9 @@ class character {
 
 }
 
+export = character;
+
+/*
 class individual {
     characters: Array<character>;
 
@@ -31,37 +34,44 @@ class generation {
 }
 
 class program {
-    
+    running: boolean;
 
     constructor() {
-        this.state = false;
+        console.log('starting program');
+        this.running = false;
+        var t1 = new timer(2000, function(){console.log('test');});
+
+        setTimeout(function(){t1.stopTimer()}, 10000)
     }
 
     
 }
 
 class timer {
-    state: boolean;
+    stateRunning: boolean;
     intervall: number;
-    onTick: function;
+    onTick: any;
 
-    constructor() {
-
+    constructor(newIntervall: number, func: any) {
+        console.log('creating timer');
+        this.intervall = newIntervall;
+        this.onTick = func;
     }
 
     public startTimer() {
-        this.state = true;
-
+        this.stateRunning = true;
+        setTimeout(this.tick, this.intervall);
     }
 
     public tick(){
-        if(this.state) {
-
+        if(this.stateRunning) {
+            this.onTick;
+            setTimeout(this.tick, this.intervall);
         }
     }
 
     public stopTimer() {
-        this.state = false;
+        this.stateRunning = false;
     }
 }
-
+*/
