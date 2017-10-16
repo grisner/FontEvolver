@@ -6,15 +6,6 @@ setPixel=function(imageData, x, y, r, g, b, a) {
     imageData.data[index + 3] = a;
 };
 
-/*Get=function(URL) {
-    var xhttp = new XMLHttpRequest();
-    xhttp.open("GET", URL, false);
-    xhttp.setRequestHeader("Content-type", "application/json");
-    xhttp.send();
-    var response = JSON.parse(xhttp.responseText);
-    return response;
-};*/
-
 Get=function(URL, callbackFn) {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = callbackFn;
@@ -22,7 +13,7 @@ Get=function(URL, callbackFn) {
     xhttp.send();
 };
 
-exports.drawImages = function() {
+updateScreen = function() {
     // is run in frontend
     console.log('drawImages');
 
@@ -45,6 +36,7 @@ exports.drawImages = function() {
 
             try{
                 response = JSON.parse(data.target.responseText);
+                window.response = response;
             }
             catch(e) {
                 console.error(e)
@@ -80,6 +72,22 @@ exports.drawImages = function() {
         
         
     }
+};
+
+exports.drawImages = function() {
+    updateScreen();
+};
+
+run = function() {
+    let url = "http://127.0.0.1/runEvolution";
+    Get(url, function(){console.log('started time');});
+    window.t1 = setInterval(updateScreen, 1000);
+};
+
+stop = function() {
+    let url = "http://127.0.0.1/stopEvolution";
+    Get(url, function(){console.log('stopped time');});    
+    clearInterval(window.t1);
 };
 
 
