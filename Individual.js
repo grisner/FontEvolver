@@ -5,13 +5,14 @@ var Character = React.createClass({
         id: React.PropTypes.string,
         image: React.PropTypes.array,
         element: React.PropTypes.object,
-        drawThis: React.PropTypes.func
+        drawThis: React.PropTypes.func,
+        key: React.PropTypes.string
     },
     getInitialState: function () {
         //console.log('initializing Character ' + this.props.id);
         //this.props.image = this.createRandomData(100, 100);
         //this.props.element = <p>{this.props.id}</p>;
-        this.props.element = <canvas id={"Canv." + this.props.id} height="100" width="100"></canvas>;
+        this.props.element = <canvas id={"Canv." + this.props.id} key={"Canv." + this.props.id} height="100" width="100"></canvas>;
         return null;
     },
     render: function () {
@@ -21,7 +22,8 @@ var Character = React.createClass({
 var Individual = React.createClass({
     propTypes: {
         id: React.PropTypes.string,
-        Characters: React.PropTypes.array
+        Characters: React.PropTypes.array,
+        key: React.PropTypes.string
     },
     render: function () {
         // console.log(this.props.Characters[0].props.image);
@@ -53,13 +55,13 @@ var Generation = React.createClass({
                 [i + 2, i + 3, i + 4]
             ];
             //var ACanvas = <canvas id={"Canv." + i +".A"} height="100" width="100"></canvas>;
-            var A = <Character id={"Char." + i + ".0"}/>;
+            var A = <Character key={"Char." + i + ".0"} id={"Char." + i + ".0"}/>;
             //var A = <Character id={"Char."+ i + ".0"} />;
             //var BCanvas = <canvas id={"Canv." + i +".B"} height="100" width="100"></canvas>;
-            var B = <Character id={"Char." + i + ".1"}/>;
+            var B = <Character key={"Char." + i + ".1"} id={"Char." + i + ".1"}/>;
             //var CCanvas = <canvas id={"Canv." + i +".C"} height="100" width="100"></canvas>;
-            var C = <Character id={"Char." + i + ".2"}/>;
-            var gal = <Individual id={i} Characters={[A, B, C]}/>;
+            var C = <Character key={"Char." + i + ".2"} id={"Char." + i + ".2"}/>;
+            var gal = <Individual id={i.toString()} key={i.toString()} Characters={[A, B, C]}/>;
             ppl[i] = gal;
         }
         this.props.Individuals = ppl;
@@ -73,8 +75,21 @@ var Generation = React.createClass({
     },
     render: function () {
         return (<div>
-                <table>{this.props.Individuals}</table>
-                <button onClick={frontend.drawImages}>click</button>
+                <table>{this.props.Individuals}
+                    <tr>
+                        <td key="clickcell">
+                            <button onClick={frontend.drawImages}>click</button>
+                        </td>
+                    
+                        <td key="startcell">
+                            <button onClick={frontend.start}>start</button>
+                        </td>
+                    
+                        <td key="stopcell">
+                            <button onClick={frontend.stop}>stop</button>
+                        </td>
+                    </tr>
+                </table>
             </div>);
     }
 });

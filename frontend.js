@@ -33,7 +33,7 @@ updateScreen = function() {
         var url = "http://127.0.0.1/GetCharacterImage&" + ID + "&" + charID + "&" + el
 
         Get(url, function(data){
-
+            
             try{
                 response = JSON.parse(data.target.responseText);
                 window.response = response;
@@ -67,6 +67,7 @@ updateScreen = function() {
             }
             c.putImageData(imageData, 0, 0); // at coords 0,0
             console.log("drawn: " + ID + ":" + charID);
+        
         });
 
         
@@ -74,14 +75,10 @@ updateScreen = function() {
     }
 };
 
-exports.drawImages = function() {
-    updateScreen();
-};
-
-run = function() {
+start = function() {
     let url = "http://127.0.0.1/runEvolution";
     Get(url, function(){console.log('started time');});
-    window.t1 = setInterval(updateScreen, 1000);
+    window.t1 = setInterval(updateScreen, 500);
 };
 
 stop = function() {
@@ -89,6 +86,17 @@ stop = function() {
     Get(url, function(){console.log('stopped time');});    
     clearInterval(window.t1);
 };
+
+
+exports.drawImages = function() {
+    updateScreen();
+};
+
+exports.start = function() {
+    start();
+};
+
+exports.stop = function() {stop();};
 
 
 

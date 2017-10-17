@@ -24,7 +24,6 @@ app.get('/test', function (res, req) {
     console.log();
 });
 app.get('/getCharacterImage&:individualID&:characterID&:el', function (req, res) {
-    console.log('index.js.getCharacterImage ' + req.params.individualID + ',' + req.params.characterID);
     var image = p.gen.population[0].characters[0].image;
     var result = {
         'image': image,
@@ -64,7 +63,7 @@ var server = app.listen(80, function () {
     console.log('Listening @ http://%s:%d', addr.address, addr.port);
 });
 // TO RUN DOCKER 
-// docker run -v $(pwd):/FontEvolver -p 80:80 -td node /bin/bash 
+// docker run -v $(pwd):/FontEvolver -p 80:80 -it node:version2 /bin/bash 
 // Enter running container
 // docker exec -it 9b7b039fef39 /bin/bash
 // committing image
