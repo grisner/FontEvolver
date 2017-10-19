@@ -1,3 +1,5 @@
+"use strict";
+
 export class timer {
     stateRunning: boolean;
     intervall: number;
@@ -13,9 +15,7 @@ export class timer {
     start() {
         console.log('starting timer');
         this.stateRunning = true;
-        console.log(this.intervall);
-        console.log(this.onTick);
-
+        
         this.timer = setInterval(this.onTick,this.intervall);
     }
 

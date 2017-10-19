@@ -1,4 +1,7 @@
-setPixel=function(imageData, x, y, r, g, b, a) {
+
+var backendURL = "http://127.0.0.1:8000";
+
+var setPixel = function(imageData, x, y, r, g, b, a) {
     var index = (x + y * imageData.width) * 4;
     imageData.data[index + 0] = r;
     imageData.data[index + 1] = g;
@@ -6,14 +9,14 @@ setPixel=function(imageData, x, y, r, g, b, a) {
     imageData.data[index + 3] = a;
 };
 
-Get=function(URL, callbackFn) {
+var Get=function(URL, callbackFn) {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = callbackFn;
     xhttp.open("GET", URL, true);
     xhttp.send();
 };
 
-updateScreen = function() {
+function updateScreen() {
     // is run in frontend
     console.log('drawImages');
 
@@ -30,7 +33,7 @@ updateScreen = function() {
 
         // Get data from the right character
         console.log("drawing: " + ID + ":" + charID);
-        var url = "http://127.0.0.1/GetCharacterImage&" + ID + "&" + charID + "&" + el
+        var url = backendURL + "/GetCharacterImage&" + ID + "&" + charID + "&" + el
 
         Get(url, function(data){
             
@@ -41,7 +44,7 @@ updateScreen = function() {
             catch(e) {
                 console.error(e)
                 window.t = data.target
-                console.log(data.target.response)
+                console.log(data.target.response.image.length)
             }
 
             element = elements[response.el];
@@ -55,7 +58,17 @@ updateScreen = function() {
             window.response = response;
             var image = response.image;
 
-            for(i=0;i < image.length; i+=3) {
+            for(y=0; y < 100; y++) {
+                for(x=0; x < 100; x++) {
+                    r = image[x][y][0];
+                    g = image[x][y][1];
+                    b = image[x][y][2];
+                    a = 255;
+                    setPixel(imageData, x, y, r, g, b,a);
+                }
+            }
+
+            /*for(i=0;i < image.length; i+=3) {
                 x = i % width;
                 y = parseInt(i/width);
                 r = image[i];
@@ -64,7 +77,7 @@ updateScreen = function() {
                 a = 255;
                 setPixel(imageData, x, y, r, g, b,a);
                 
-            }
+            }*/
             c.putImageData(imageData, 0, 0); // at coords 0,0
             console.log("drawn: " + ID + ":" + charID);
         
@@ -75,17 +88,22 @@ updateScreen = function() {
     }
 };
 
-start = function() {
-    let url = "http://127.0.0.1/runEvolution";
+var start = function() {
+    var url = backendURL + "/runEvolution";
     Get(url, function(){console.log('started time');});
     window.t1 = setInterval(updateScreen, 500);
 };
 
-stop = function() {
-    let url = "http://127.0.0.1/stopEvolution";
+var stop = function() {
+    var url =backendURL + "/stopEvolution";
     Get(url, function(){console.log('stopped time');});    
     clearInterval(window.t1);
 };
+
+var tick = function() {
+    var url = backendURL + "/tick";
+    Get(url, function(){console.log('ticked');});    
+}
 
 
 exports.drawImages = function() {
@@ -98,6 +116,7 @@ exports.start = function() {
 
 exports.stop = function() {stop();};
 
+exports.tick = function() {tick();};
 
 
 

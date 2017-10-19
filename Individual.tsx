@@ -1,3 +1,5 @@
+"use strict";
+
 var React = require('react');
 var frontend = require('./frontend.js');
 
@@ -54,37 +56,31 @@ module.exports = Individual;
 var Generation = React.createClass({
     propTypes: {
         id: React.PropTypes.string,
-        genNum: React.PropTypes.string,
         Individuals: React.PropTypes.array,
-        runEvolution: React.PropTypes.func,
-        stopEvolution: React.PropTypes.func
+        popSize: React.PropTypes.number,
+        charSize: React.PropTypes.number
     },
 
     getInitialState() {
-        var popAmount = 2;
+        var popAmount = this.props.popSize;
         var ppl = new Array(popAmount);
 
-        this.props.runEvolution = this.runEvolution;
-        this.props.stopEvolution = this.stopEvolution;
-
         for(let i=0; i < popAmount; i++) {
-            
-            var images = [
-                [i+1,i+2,i+3,1,2,3,1,2,3,1,2,3,1,2,3,i+1,i+2,i+3,1,2,3,1,2,3,1,2,3,1,2,3],
-                [i+2,i+3, i+4,1,2,3,1,2,3,1,2,3,1,2,3],
-                [i+2,i+3, i+4]];
+            var chars = new Array(this.props.charSize);
 
+            for(let c=0; c < this.props.charSize; c++) {
+                var char = <Character key={"Char."+ i.toString() + "." + c.toString()} id={"Char."+ i.toString() + "." + c.toString()} />;
+                chars[c] = char;
+            }
+
+            var gal = <Individual id={i.toString()} key={i.toString()} Characters={chars} />
+           
             //var ACanvas = <canvas id={"Canv." + i +".A"} height="100" width="100"></canvas>;
-            var A = <Character key={"Char."+ i + ".0"} id={"Char."+ i + ".0"} />;
             //var A = <Character id={"Char."+ i + ".0"} />;
-
             //var BCanvas = <canvas id={"Canv." + i +".B"} height="100" width="100"></canvas>;
-            var B = <Character key={"Char."+ i + ".1"} id={"Char."+ i + ".1"} />;
-
+            //var B = <Character key={"Char."+ i + ".1"} id={"Char."+ i + ".1"} />;
             //var CCanvas = <canvas id={"Canv." + i +".C"} height="100" width="100"></canvas>;
-            var C = <Character key={"Char."+ i + ".2"} id={"Char."+ i + ".2"} />;
-
-            var gal = <Individual id={i.toString()} key={i.toString()} Characters={[A,B,C]} />
+            //var C = <Character key={"Char."+ i + ".2"} id={"Char."+ i + ".2"} />;
 
             ppl[i] = gal;
         }
@@ -92,14 +88,6 @@ var Generation = React.createClass({
         this.props.Individuals = ppl;
         
         return null;
-    },
-
-    runEvolution: function() {
-        console.log('generation runEvolution')
-    },
-
-    stopEvolution: function() {
-        console.log('generation stopEvolution')
     },
 
     render: function () {
@@ -117,6 +105,9 @@ var Generation = React.createClass({
                     
                         <td key="stopcell">
                             <button onClick={frontend.stop}>stop</button>
+                        </td>
+                        <td key="tick">
+                            <button onClick={frontend.tick}>tick</button>
                         </td>
                     </tr>
                 </table>
