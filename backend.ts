@@ -37,10 +37,11 @@ export class character {
         }
         this.image = arr;
 */
-        var span = Math.floor(Math.random() * 10);
 
-        for(let y = 0; y< 100; y+=2) {
-            for(let x = 0; x < 100; x+=2) {
+        let span: number = Math.floor(Math.random() * 5)+1;
+
+        for(let y = 0; y< 100; y+=span) {
+            for(let x = 0; x < 100; x+=span) {
                 this.image[x][y][0] = Math.random() * 256 | 0;
                 this.image[x][y][1] = Math.random() * 256 | 0;
                 this.image[x][y][2] = Math.random() * 256 | 0;
@@ -157,7 +158,7 @@ export class program {
         this.gen.newGeneration();
         this.evo = new evolution();
 
-        this.t1 = new timer(500, () => {
+        this.t1 = new timer(150, () => {
             this.gen = this.evo.nextGeneration({oldGen: this.gen});
             //console.log(this.gen.population[0].characters[0].image[50][50] + " / " + this.gen.population[1].characters[0].image[50][50] + " => " + newGen[0].characters[0].image[50][50]);
             this.counter++;
