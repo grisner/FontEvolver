@@ -1,7 +1,7 @@
 
 var backendURL = "http://127.0.0.1:8000";
 
-var setPixel = function(imageData, x, y, r, g, b, a) {
+var setPixel= function(imageData, x, y, r, g, b, a) {
     var index = (x + y * imageData.width) * 4;
     imageData.data[index + 0] = r;
     imageData.data[index + 1] = g;
@@ -9,21 +9,19 @@ var setPixel = function(imageData, x, y, r, g, b, a) {
     imageData.data[index + 3] = a;
 };
 
-var Get=function(URL, callbackFn) {
+var Get= function(URL, callbackFn) {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = callbackFn;
     xhttp.open("GET", URL, true);
     xhttp.send();
 };
 
-function updateScreen() {
+var updateScreen= function() {
     // is run in frontend
     console.log('drawImages');
 
     var elements = document.getElementsByTagName('canvas');
-    console.log(elements.length);
-
-
+    
     for(el=0; el < elements.length; el++) {
         
     // for (var el in elements) {
@@ -32,91 +30,92 @@ function updateScreen() {
         var charID = element.id.split('.')[3]
 
         // Get data from the right character
-        console.log("drawing: " + ID + ":" + charID);
         var url = backendURL + "/GetCharacterImage&" + ID + "&" + charID + "&" + el
+        console.log(el + ' | ' + url);
 
-        Get(url, function(data){
-            
-            try{
-                response = JSON.parse(data.target.responseText);
+        Get(url, function(data) {
+            window.d = data;
+            console.log('readystate' + data.target.readyState);
+            if(data.target.readyState == 4) {
+                console.log("drawing: " + ID + ":" + charID);
+
+                try{
+                    response = JSON.parse(data.target.responseText);
+                    window.response = response;
+                }
+                catch(e) {
+                    console.error(e)
+                    window.d = data;
+                    console.log('leaving a function getting ' + data.target.response.image.length)
+                    return;
+                }
+
+                element = elements[response.el];
+                var c = element.getContext('2d');
+                var width = c.canvas.width;
+                var height = c.canvas.height;
+
+                // create a new pixel array
+                var imageData = c.createImageData(width, height);
+
                 window.response = response;
-            }
-            catch(e) {
-                console.error(e)
-                window.t = data.target
-                console.log(data.target.response.image.length)
-            }
+                var image = response.image;
 
-            element = elements[response.el];
-            var c = element.getContext('2d');
-            var width = c.canvas.width;
-            var height = c.canvas.height;
+                for(y=0; y < 100; y++) {
+                    for(x=0; x < 100; x++) {
+                        if(x == 50 && y == 10) {
+                            console.log(x + ";" + y + ": " + image[x][y][0] + "," + image[x][y][1] + "," + image[x][y][2] + "," + image[x][y][3]);
+                        }
 
-            // create a new pixel array
-            var imageData = c.createImageData(width, height);
+                        r = image[x][y][0];
+                        g = image[x][y][1];
+                        b = image[x][y][2];
+                        a = image[x][y][3];
+                        setPixel(imageData, x, y, r, g, b,a);
+                    }
+                }
 
-            window.response = response;
-            var image = response.image;
-
-            for(y=0; y < 100; y++) {
-                for(x=0; x < 100; x++) {
-                    r = image[x][y][0];
-                    g = image[x][y][1];
-                    b = image[x][y][2];
+                /*for(i=0;i < image.length; i+=3) {
+                    x = i % width;
+                    y = parseInt(i/width);
+                    r = image[i];
+                    g = image[i+1];
+                    b = image[i+2];
                     a = 255;
                     setPixel(imageData, x, y, r, g, b,a);
-                }
-            }
-
-            /*for(i=0;i < image.length; i+=3) {
-                x = i % width;
-                y = parseInt(i/width);
-                r = image[i];
-                g = image[i+1];
-                b = image[i+2];
-                a = 255;
-                setPixel(imageData, x, y, r, g, b,a);
+                    
+                }*/
+                c.putImageData(imageData, 0, 0); // at coords 0,0
                 
-            }*/
-            c.putImageData(imageData, 0, 0); // at coords 0,0
-            console.log("drawn: " + ID + ":" + charID);
-        
+            }
         });
-
-        
-        
     }
 };
 
-var start = function() {
-    var url = backendURL + "/runEvolution";
-    Get(url, function(){console.log('started time');});
-    window.t1 = setInterval(updateScreen, 500);
-};
+module.exports = {
+    tick: function() {
+        var url = backendURL + "/tick";
+        Get(url, function(){
+            updateScreen();
+        });
+    },
 
-var stop = function() {
-    var url =backendURL + "/stopEvolution";
-    Get(url, function(){console.log('stopped time');});    
-    clearInterval(window.t1);
-};
+    start: function() {
+        var url = backendURL + "/runEvolution";
+        Get(url, function(){console.log('started time');});
+        window.t1 = setInterval(updateScreen, 150);
+    },
 
-var tick = function() {
-    var url = backendURL + "/tick";
-    Get(url, function(){console.log('ticked');});    
+    stop: function() {
+        var url =backendURL + "/stopEvolution";
+        Get(url, function(){console.log('stopped time');});    
+        clearInterval(window.t1);
+    },
+
+    redraw: function() {
+        updateScreen();
+    }
 }
-
-
-exports.drawImages = function() {
-    updateScreen();
-};
-
-exports.start = function() {
-    start();
-};
-
-exports.stop = function() {stop();};
-
-exports.tick = function() {tick();};
 
 
 

@@ -37,15 +37,13 @@ var Individual = React.createClass({
     },
 
     render: function () {
-        // console.log(this.props.Characters[0].props.image);
-
         var chars;
         for(let i=0; i < this.props.Characters.length; i++) {
             chars += <td>this.props.Characters[i]</td>;
         }
 
         return (
-            <tr>{this.props.Characters}</tr>
+            <div>{this.props.Characters}<td><input type="checkbox" id={"box." + this.props.id} key={"box." + this.props.id}></input></td></div>
         );
     }
 });
@@ -64,6 +62,7 @@ var Generation = React.createClass({
     getInitialState() {
         var popAmount = this.props.popSize;
         var ppl = new Array(popAmount);
+        let row: any;
 
         for(let i=0; i < popAmount; i++) {
             var chars = new Array(this.props.charSize);
@@ -72,17 +71,18 @@ var Generation = React.createClass({
                 var char = <Character key={"Char."+ i.toString() + "." + c.toString()} id={"Char."+ i.toString() + "." + c.toString()} />;
                 chars[c] = char;
             }
+            
+            // placing individuals two in a row, to save some space
+            let gal = <Individual id={i.toString()} key={i.toString()} Characters={chars} />;
+            if(i%2 != 0) {
+                row = <tr>{row}{gal}</tr>;
+                ppl[i] = row;
+            }
+            else {
+                row = gal;
+            }
 
-            var gal = <Individual id={i.toString()} key={i.toString()} Characters={chars} />
-           
-            //var ACanvas = <canvas id={"Canv." + i +".A"} height="100" width="100"></canvas>;
-            //var A = <Character id={"Char."+ i + ".0"} />;
-            //var BCanvas = <canvas id={"Canv." + i +".B"} height="100" width="100"></canvas>;
-            //var B = <Character key={"Char."+ i + ".1"} id={"Char."+ i + ".1"} />;
-            //var CCanvas = <canvas id={"Canv." + i +".C"} height="100" width="100"></canvas>;
-            //var C = <Character key={"Char."+ i + ".2"} id={"Char."+ i + ".2"} />;
-
-            ppl[i] = gal;
+            
         }
 
         this.props.Individuals = ppl;
@@ -91,12 +91,13 @@ var Generation = React.createClass({
     },
 
     render: function () {
+        // <script>window.onload({frontend.drawImages}())</script>
         return (
             <div>
-                <table>{this.props.Individuals}
+                <table>
                     <tr>
                         <td key="clickcell">
-                            <button onClick={frontend.drawImages}>click</button>
+                            <button onClick={frontend.redraw}>redraw</button>
                         </td>
                     
                         <td key="startcell">
@@ -110,6 +111,7 @@ var Generation = React.createClass({
                             <button onClick={frontend.tick}>tick</button>
                         </td>
                     </tr>
+                    {this.props.Individuals}
                 </table>
             </div>
         );

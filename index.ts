@@ -11,7 +11,7 @@ import { program } from "./backend";
 import { timer } from "./timer";
 
 var initData = {
-    popSize: 8,
+    popSize: 2,
     charSize: 3
 };
 
@@ -43,20 +43,19 @@ app.get('/test', function(res, req){
 
 app.get('/getCharacterImage&:individualID&:characterID&:el', function (req, res) {
     
-    let image = p.gen.population[0].characters[0].image;
+    let image = p.gen.population[req.params.individualID].characters[req.params.characterID].image;
 
     var result = {
         'image': image,
         'el': req.params.el,
         'individualID': req.params.individualID,
         'characterID': req.params.characterID
-        
     };
+
     res.send(result);
 });
 
 // Frontend
-
 app.use('/createGeneration', function (req, res) {
     res.setHeader('content-type', 'application/javascript');
     browserify('./app.js', {

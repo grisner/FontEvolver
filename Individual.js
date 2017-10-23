@@ -1,3 +1,4 @@
+"use strict";
 var React = require('react');
 var frontend = require('./frontend.js');
 var Character = React.createClass({
@@ -12,11 +13,11 @@ var Character = React.createClass({
         //console.log('initializing Character ' + this.props.id);
         //this.props.image = this.createRandomData(100, 100);
         //this.props.element = <p>{this.props.id}</p>;
-        this.props.element = <canvas id={"Canv." + this.props.id} key={"Canv." + this.props.id} height="100" width="100"></canvas>;
+        this.props.element = React.createElement("canvas", { id: "Canv." + this.props.id, key: "Canv." + this.props.id, height: "100", width: "100" });
         return null;
     },
     render: function () {
-        return (<td>{this.props.element}</td>);
+        return (React.createElement("td", null, this.props.element));
     }
 });
 var Individual = React.createClass({
@@ -26,71 +27,64 @@ var Individual = React.createClass({
         key: React.PropTypes.string
     },
     render: function () {
-        // console.log(this.props.Characters[0].props.image);
         var chars;
         for (var i = 0; i < this.props.Characters.length; i++) {
-            chars += <td>this.props.Characters[i]</td>;
+            chars += React.createElement("td", null, "this.props.Characters[i]");
         }
-        return (<tr>{this.props.Characters}</tr>);
+        return (React.createElement("div", null,
+            this.props.Characters,
+            React.createElement("td", null,
+                React.createElement("input", { type: "checkbox", id: "box." + this.props.id, key: "box." + this.props.id }))));
     }
 });
 module.exports = Individual;
 var Generation = React.createClass({
     propTypes: {
         id: React.PropTypes.string,
-        genNum: React.PropTypes.string,
         Individuals: React.PropTypes.array,
-        runEvolution: React.PropTypes.func,
-        stopEvolution: React.PropTypes.func
+        popSize: React.PropTypes.number,
+        charSize: React.PropTypes.number
     },
     getInitialState: function () {
-        var popAmount = 2;
+        var popAmount = this.props.popSize;
         var ppl = new Array(popAmount);
-        this.props.runEvolution = this.runEvolution;
-        this.props.stopEvolution = this.stopEvolution;
+        var row;
         for (var i = 0; i < popAmount; i++) {
-            var images = [
-                [i + 1, i + 2, i + 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, i + 1, i + 2, i + 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3],
-                [i + 2, i + 3, i + 4, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3],
-                [i + 2, i + 3, i + 4]
-            ];
-            //var ACanvas = <canvas id={"Canv." + i +".A"} height="100" width="100"></canvas>;
-            var A = <Character key={"Char." + i + ".0"} id={"Char." + i + ".0"}/>;
-            //var A = <Character id={"Char."+ i + ".0"} />;
-            //var BCanvas = <canvas id={"Canv." + i +".B"} height="100" width="100"></canvas>;
-            var B = <Character key={"Char." + i + ".1"} id={"Char." + i + ".1"}/>;
-            //var CCanvas = <canvas id={"Canv." + i +".C"} height="100" width="100"></canvas>;
-            var C = <Character key={"Char." + i + ".2"} id={"Char." + i + ".2"}/>;
-            var gal = <Individual id={i.toString()} key={i.toString()} Characters={[A, B, C]}/>;
-            ppl[i] = gal;
+            var chars = new Array(this.props.charSize);
+            for (var c = 0; c < this.props.charSize; c++) {
+                var char = React.createElement(Character, { key: "Char." + i.toString() + "." + c.toString(), id: "Char." + i.toString() + "." + c.toString() });
+                chars[c] = char;
+            }
+            // placing individuals two in a row, to save some space
+            var gal = React.createElement(Individual, { id: i.toString(), key: i.toString(), Characters: chars });
+            if (i % 2 != 0) {
+                row = React.createElement("tr", null,
+                    row,
+                    gal);
+                ppl[i] = row;
+            }
+            else {
+                row = gal;
+            }
         }
         this.props.Individuals = ppl;
         return null;
     },
-    runEvolution: function () {
-        console.log('generation runEvolution');
-    },
-    stopEvolution: function () {
-        console.log('generation stopEvolution');
-    },
     render: function () {
-        return (<div>
-                <table>{this.props.Individuals}
-                    <tr>
-                        <td key="clickcell">
-                            <button onClick={frontend.drawImages}>click</button>
-                        </td>
-                    
-                        <td key="startcell">
-                            <button onClick={frontend.start}>start</button>
-                        </td>
-                    
-                        <td key="stopcell">
-                            <button onClick={frontend.stop}>stop</button>
-                        </td>
-                    </tr>
-                </table>
-            </div>);
+        // <script>window.onload({frontend.drawImages}())</script>
+        return (React.createElement("div", null,
+            React.createElement("table", null,
+                React.createElement("tr", null,
+                    React.createElement("td", { key: "clickcell" },
+                        React.createElement("button", { onClick: frontend.redraw }, "redraw")),
+                    React.createElement("td", { key: "startcell" },
+                        React.createElement("button", { onClick: frontend.start }, "start")),
+                    React.createElement("td", { key: "stopcell" },
+                        React.createElement("button", { onClick: frontend.stop }, "stop")),
+                    React.createElement("td", { key: "tick" },
+                        React.createElement("button", { onClick: frontend.tick }, "tick"))),
+                this.props.Individuals)));
     }
 });
 module.exports = Generation;
+//# sourceMappingURL=Individual.js.map

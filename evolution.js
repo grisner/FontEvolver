@@ -1,158 +1,64 @@
 "use strict";
-exports.__esModule = true;
-var timer_1 = require("./timer");
-var character = /** @class */ (function () {
-    function character(newSizeX, newSizeY) {
-        this.sizeX = newSizeX;
-        this.sizeY = newSizeY;
-        this.image = new Array(newSizeX * newSizeY * 3);
+Object.defineProperty(exports, "__esModule", { value: true });
+var b = require("./backend");
+var evolution = /** @class */ (function () {
+    function evolution() {
     }
-    character.prototype.createRandomData = function () {
-        var arr = new Array(this.sizeX * this.sizeY * 3);
-        var values = this.sizeX * this.sizeY * 3;
-        for (var i = 0; i < values; i++) {
-            arr[i] = Math.random() * 256 | 0;
-        }
-        this.image = arr;
-    };
-    character.prototype.StartData = function () {
-        var A = new Array(100, 100, 3);
-        for (var x = 0; x < 100; x++) {
-            for (var y = 0; y < 100; y++) {
-                for (var rgb = 0; rgb < 3; rgb++) {
-                    A[x][y][rgb] = 256;
+    // creating offspring based on parents
+    evolution.prototype.breed = function (p) {
+        var parent1 = p.parent1;
+        var parent2 = p.parent2;
+        var child = new b.individual(p.parent1.characters.length);
+        for (var c = 0; c < child.characters.length; c++) {
+            var chunkX = Math.floor(Math.random() * 9 + 1);
+            for (var y = 0; y < parent1.characters[0].sizeY; y++) {
+                for (var x = 0; x < parent1.characters[0].sizeX; x += chunkX) {
+                    var chance = Math.random() * 20 | 0;
+                    var template = void 0;
+                    switch (true) {
+                        case (chance < 9):
+                            template = parent1.characters[c].image[x][y];
+                            break;
+                        case (chance < 18):
+                            template = parent2.characters[c].image[x][y];
+                            break;
+                        default:
+                            /*child.characters[c].image[x][y][0] = Math.random() * 256 | 0;
+                            child.characters[c].image[x][y][1] = Math.random() * 256 | 0;
+                            child.characters[c].image[x][y][2] = Math.random() * 256 | 0;*/
+                            template = [0, 0, 0, 0];
+                    }
+                    for (var spanx = x; spanx < x + chunkX; spanx++) {
+                        child.characters[c].image[x][y] = template;
+                    }
                 }
             }
         }
-        // Setting start positions
-        A[50][10][0] = 0;
-        A[50][10][1] = 0;
-        A[50][10][2] = 0;
-        A[10][50][0] = 0;
-        A[10][50][1] = 0;
-        A[10][50][2] = 0;
-        A[90][50][0] = 0;
-        A[90][50][1] = 0;
-        A[90][50][2] = 0;
-        A[10][90][0] = 0;
-        A[10][90][1] = 0;
-        A[10][90][2] = 0;
-        A[90][90][0] = 0;
-        A[90][90][1] = 0;
-        A[90][90][2] = 0;
-    };
-    character.prototype.convertPosToIndex = function (x, y, rgb) {
-    };
-    character.prototype.getCharacterImage = function () {
-        return this.image;
-    };
-    return character;
-}());
-exports.character = character;
-var individual = /** @class */ (function () {
-    function individual(charSize) {
-        this.characters = new Array(charSize);
-        for (var i = 0; i < charSize; i++) {
-            var c = new character(100, 100);
-            this.characters[i] = c;
-        }
-        console.log('characters in this ind: ' + this.characters.length);
-    }
-    individual.prototype.getCharacterImage = function (characterID) {
-        return this.characters[characterID].getCharacterImage();
-    };
-    return individual;
-}());
-exports.individual = individual;
-var generation = /** @class */ (function () {
-    function generation(popSize, charSize) {
-        this.population = new Array(popSize);
-        for (var i = 0; i < popSize; i++) {
-            var ind = new individual(charSize);
-            this.population[i] = ind;
-        }
-        console.log('popSize: ' + this.population.length);
-    }
-    generation.prototype.breedCharacters = function (parent1, parent2) {
-        console.log('breeding');
-        var child = new character(parent1.sizeX, parent1.sizeY);
-        var img1 = parent1.image;
-        var img2 = parent2.image;
-        var img3 = new Array(img1.length);
-        for (var p in img1) {
-            var chance = Math.random() * 10 | 0;
-            switch (true) {
-                case (chance < 5):
-                    img3[p] = img1[p];
-                    break;
-                case (chance < 8):
-                    img3[p] = img2[p];
-                    break;
-                default:
-                    img3[p] = Math.random() * 256 | 0;
-            }
-        }
-        child.image = img3;
         return child;
     };
-    generation.prototype.nextGeneration = function () {
+    // creating a new generation depending on rules
+    evolution.prototype.nextGeneration = function (old) {
         console.log('next generation');
-        // recreate all characters (from parents (eventually))
-        var newPop = new Array(this.population.length);
-        var charSize = this.population[0].characters.length;
-        for (var j = 1; j < this.population.length; j++) {
-            var ind = new individual(charSize);
-            var parent1 = this.population[j];
-            var parent2 = this.population[j - 1];
-            for (var c in parent1.characters) {
-                ind.characters[c] = this.breedCharacters(parent1.characters[c], parent2.characters[c]);
-            }
-            newPop[j - 1] = ind;
+        var oldGen = old.oldGen;
+        var popSize = oldGen.population.length;
+        console.log('popSize: ' + popSize);
+        var newGen = new b.generation(popSize, oldGen.population[0].characters.length);
+        // random behaviour
+        for (var n = 0; n < popSize; n++) {
+            // randomize parents
+            var parent1ID = Math.floor(Math.random() * popSize);
+            var parent2ID = Math.floor(Math.random() * popSize);
+            //let parent1ID = 0;
+            //let parent2ID = 1;
+            var parent1 = oldGen.population[parent1ID];
+            var parent2 = oldGen.population[parent2ID];
+            console.log('pairing ' + parent1ID + ' with ' + parent2ID);
+            newGen.population[n] = this.breed({ parent1: parent1, parent2: parent2 });
+            //newGen.population[1] = this.breed({parent2,parent1});            
         }
-        var newInd = new individual(charSize);
-        for (var c in newInd.characters) {
-            newInd.characters[c].createRandomData();
-        }
-        newPop[this.population.length - 1] = newInd;
-        this.population = newPop;
+        return newGen;
     };
-    generation.prototype.newGeneration = function () {
-        console.log('new generation');
-        for (var i in this.population) {
-            var ind = this.population[i];
-            for (var c in ind.characters) {
-                var char = ind.characters[c];
-                char.createRandomData();
-            }
-        }
-    };
-    return generation;
+    return evolution;
 }());
-exports.generation = generation;
-var program = /** @class */ (function () {
-    function program() {
-        var _this = this;
-        console.log('starting program');
-        this.counter = 0;
-        var popSize = 3;
-        var charSize = 2;
-        this.running = false;
-        this.gen = new generation(popSize, charSize);
-        this.gen.newGeneration();
-        this.t1 = new timer_1.timer(500, function () {
-            _this.gen.nextGeneration();
-            _this.counter++;
-            console.log(_this.counter);
-        });
-    }
-    program.prototype.start = function () {
-        this.t1.start();
-        this.running = true;
-    };
-    program.prototype.stop = function () {
-        this.t1.stop();
-        this.running = false;
-    };
-    return program;
-}());
-exports.program = program;
+exports.evolution = evolution;
+//# sourceMappingURL=evolution.js.map

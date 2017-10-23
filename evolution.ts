@@ -1,10 +1,10 @@
 "use strict";
 
+
 import * as b from "./backend"
 // import {program} from "./backend"
 
 import * as interfaces from './interfaces'
-
 
 export class evolution {
     constructor() {}
@@ -12,40 +12,43 @@ export class evolution {
     // creating offspring based on parents
     
     breed(p: interfaces.IBreed) {
-        console.log('breeding');
+        
         let parent1: b.individual = p.parent1;
         let parent2: b.individual = p.parent2;
 
-        console.log('creating child');
+        
         let child: b.individual = new b.individual(p.parent1.characters.length);
         
-        console.log('inheriting looks');
+        
         for(let c = 0; c < child.characters.length; c++) {
+            let chunkX = Math.floor(Math.random() * 9 + 1);
+
             for(let y = 0; y < parent1.characters[0].sizeY; y++) {
-                for(let x = 0; x < parent1.characters[0].sizeX; x++) {
+                for(let x = 0; x < parent1.characters[0].sizeX; x+=chunkX) {
                     let chance: number = Math.random() * 20 | 0;
+                    let template: any;
                 
                     switch(true) {
-                        case (chance < 10):
-                            child.characters[c].image[x][y] = parent1.characters[c].image[x][y];
+                        case (chance < 9):
+                            template = parent1.characters[c].image[x][y];
                             break;
 
-                        case (chance > 9):
-                            child.characters[c].image[x][y] = parent2.characters[c].image[x][y];
+                        case (chance < 18):
+                            template = parent2.characters[c].image[x][y];
                             break;
                         
-                        case (chance < 18):
-                            child.characters[c].image[x][y][0] = 128 + Math.random() * 128 | 0;
-                            child.characters[c].image[x][y][1] = 128 + Math.random() * 128 | 0;
-                            child.characters[c].image[x][y][2] = 128 + Math.random() * 128 | 0;
-                            break;
                         default:
-                            child.characters[c].image[x][y][0] = Math.random() * 256 | 0;
+                            /*child.characters[c].image[x][y][0] = Math.random() * 256 | 0;
                             child.characters[c].image[x][y][1] = Math.random() * 256 | 0;
-                            child.characters[c].image[x][y][2] = Math.random() * 256 | 0;
+                            child.characters[c].image[x][y][2] = Math.random() * 256 | 0;*/
+
+                            template = [0,0,0,255];
                     }
 
-                    
+                    for(let spanx = x; spanx < x + chunkX; spanx++) {
+                        child.characters[c].image[x][y] = template;
+                    }
+
                 }
             }
         }        

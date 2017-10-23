@@ -1,13 +1,17 @@
 "use strict";
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 var express = require('express');
 var browserify = require('browserify');
 var React = require('react');
 var jsx = require('node-jsx');
 var app = express();
 jsx.install();
-var evolution_1 = require("./evolution");
-var p = new evolution_1.program();
+var backend_1 = require("./backend");
+var initData = {
+    popSize: 2,
+    charSize: 3
+};
+var p = new backend_1.program(initData.popSize, initData.charSize);
 var Generation = require('./Individual.js');
 var gen = React.createElement(Generation, {
     id: "gen1",
@@ -19,12 +23,15 @@ app.use('/runEvolution', function (req, res) {
 app.use('/stopEvolution', function (req, res) {
     p.stop();
 });
+app.use('/tick', function (req, res) {
+    p.tick();
+});
 app.get('/test', function (res, req) {
     console.log('program');
     console.log();
 });
 app.get('/getCharacterImage&:individualID&:characterID&:el', function (req, res) {
-    var image = p.gen.population[0].characters[0].image;
+    var image = p.gen.population[req.params.individualID].characters[req.params.characterID].image;
     var result = {
         'image': image,
         'el': req.params.el,
@@ -53,20 +60,13 @@ app.use('/', function (req, res) {
     }), React.DOM.script({
         'id': 'initial-data',
         'type': 'text/plain',
-        'data-json': JSON.stringify("1")
+        'data-json': JSON.stringify(initData)
     }), React.DOM.script({
         src: '/createGeneration'
     }))));
 });
-var server = app.listen(80, function () {
+var server = app.listen(8000, function () {
     var addr = server.address();
     console.log('Listening @ http://%s:%d', addr.address, addr.port);
 });
-// TO RUN DOCKER 
-// docker run -v $(pwd):/FontEvolver -p 80:80 -it node:version2 /bin/bash 
-// Enter running container
-// docker exec -it 9b7b039fef39 /bin/bash
-// committing image
-// docker commit 9b7b039fef39 node:version2
-// running specific version of image
-// docker run -v $(pwd):/FontEvolver -p 80:80 -td node:version2 /bin/bash 
+//# sourceMappingURL=index.js.map
