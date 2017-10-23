@@ -22,7 +22,7 @@ var updateScreen= function() {
 
     var elements = document.getElementsByTagName('canvas');
     
-    for(el=0; el < elements.length; el++) {
+    for(var el=0; el < elements.length; el++) {
         
     // for (var el in elements) {
         var element = elements[el];
@@ -34,14 +34,11 @@ var updateScreen= function() {
         console.log(el + ' | ' + url);
 
         Get(url, function(data) {
-            window.d = data;
-            console.log('readystate' + data.target.readyState);
             if(data.target.readyState == 4) {
                 console.log("drawing: " + ID + ":" + charID);
 
                 try{
                     response = JSON.parse(data.target.responseText);
-                    window.response = response;
                 }
                 catch(e) {
                     console.error(e)
@@ -50,27 +47,25 @@ var updateScreen= function() {
                     return;
                 }
 
-                element = elements[response.el];
+                var element = elements[response.el];
                 var c = element.getContext('2d');
                 var width = c.canvas.width;
                 var height = c.canvas.height;
 
                 // create a new pixel array
                 var imageData = c.createImageData(width, height);
-
-                window.response = response;
                 var image = response.image;
 
-                for(y=0; y < 100; y++) {
-                    for(x=0; x < 100; x++) {
+                for(var y=0; y < 100; y++) {
+                    for(var x=0; x < 100; x++) {
                         if(x == 50 && y == 10) {
                             console.log(x + ";" + y + ": " + image[x][y][0] + "," + image[x][y][1] + "," + image[x][y][2] + "," + image[x][y][3]);
                         }
 
-                        r = image[x][y][0];
-                        g = image[x][y][1];
-                        b = image[x][y][2];
-                        a = image[x][y][3];
+                        var r = image[x][y][0];
+                        var g = image[x][y][1];
+                        var b = image[x][y][2];
+                        var a = image[x][y][3];
                         setPixel(imageData, x, y, r, g, b,a);
                     }
                 }
