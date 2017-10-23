@@ -11,7 +11,7 @@ import { program } from "./backend";
 import { timer } from "./timer";
 
 var initData = {
-    popSize: 2,
+    popSize: 20,
     charSize: 3
 };
 

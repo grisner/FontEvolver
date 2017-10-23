@@ -60,7 +60,13 @@ var Generation = React.createClass({
     },
 
     getInitialState() {
-        var popAmount = this.props.popSize;
+        let popAmount = this.props.popSize;
+
+        // If to many viewed, the system collapses
+        if(this.props.popSize > 10) {
+            popAmount = 10;
+        }
+        
         var ppl = new Array(popAmount);
         let row: any;
 

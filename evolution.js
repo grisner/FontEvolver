@@ -22,11 +22,16 @@ var evolution = /** @class */ (function () {
                         case (chance < 18):
                             template = parent2.characters[c].image[x][y];
                             break;
+                        /*case (chance < 19):
+                            let r = Math.random() * 256 | 0;
+                            let g = Math.random() * 256 | 0;
+                            let b = Math.random() * 256 | 0;
+                            let a = Math.random() * 256 | 0;
+                            template = [r,g,b,a];
+                            break;
+                        */
                         default:
-                            /*child.characters[c].image[x][y][0] = Math.random() * 256 | 0;
-                            child.characters[c].image[x][y][1] = Math.random() * 256 | 0;
-                            child.characters[c].image[x][y][2] = Math.random() * 256 | 0;*/
-                            template = [0, 0, 0, 0];
+                            template = [0, 0, 0, 255];
                     }
                     for (var spanx = x; spanx < x + chunkX; spanx++) {
                         child.characters[c].image[x][y] = template;
@@ -41,7 +46,6 @@ var evolution = /** @class */ (function () {
         console.log('next generation');
         var oldGen = old.oldGen;
         var popSize = oldGen.population.length;
-        console.log('popSize: ' + popSize);
         var newGen = new b.generation(popSize, oldGen.population[0].characters.length);
         // random behaviour
         for (var n = 0; n < popSize; n++) {

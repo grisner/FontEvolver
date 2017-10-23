@@ -8,7 +8,7 @@ var app = express();
 jsx.install();
 var backend_1 = require("./backend");
 var initData = {
-    popSize: 2,
+    popSize: 20,
     charSize: 3
 };
 var p = new backend_1.program(initData.popSize, initData.charSize);
