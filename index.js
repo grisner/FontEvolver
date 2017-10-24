@@ -11,7 +11,7 @@ var initData = {
     popSize: 20,
     charSize: 3
 };
-var p = new backend_1.program(initData.popSize, initData.charSize);
+var p;
 var Generation = require('./Individual.js');
 var gen = React.createElement(Generation, {
     id: "gen1",
@@ -51,6 +51,7 @@ app.use('/createGeneration', function (req, res) {
         .pipe(res);
 });
 app.use('/', function (req, res) {
+    p = new backend_1.program(initData.popSize, initData.charSize);
     res.setHeader('Content-Type', 'text/html');
     res.end(React.renderToStaticMarkup(React.DOM.body(null, React.DOM.div({
         id: 'container',

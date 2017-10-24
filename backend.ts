@@ -9,6 +9,7 @@ export class character {
     image: number[][][];
     sizeX: number;
     sizeY: number;
+    
 
    
     constructor(newSizeX: number, newSizeY: number) {
@@ -26,6 +27,7 @@ export class character {
             }
             this.image[y] = xArray;
         }
+
     }
 
     createRandomData () {
@@ -41,6 +43,7 @@ export class character {
             }
         }
     }
+
 
     StartData(index: number) {
         var s = new startPos();
@@ -87,7 +90,7 @@ export class generation {
     }
 
     newGeneration() {
-        console.log('new generation');
+        //console.log('new generation');
         for(var i in this.population) {
             let ind = this.population[i];
             for(let c = 0; c < ind.characters.length; c++) {

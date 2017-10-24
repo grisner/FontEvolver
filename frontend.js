@@ -31,11 +31,11 @@ var updateScreen= function() {
 
         // Get data from the right character
         var url = backendURL + "/GetCharacterImage&" + ID + "&" + charID + "&" + el
-        console.log(el + ' | ' + url);
+        //console.log(el + ' | ' + url);
 
         Get(url, function(data) {
             if(data.target.readyState == 4) {
-                console.log("drawing: " + ID + ":" + charID);
+                //console.log("drawing: " + ID + ":" + charID);
 
                 try{
                     response = JSON.parse(data.target.responseText);
@@ -58,9 +58,9 @@ var updateScreen= function() {
 
                 for(var y=0; y < 100; y++) {
                     for(var x=0; x < 100; x++) {
-                        if(x == 50 && y == 10) {
+                        /*if(x == 50 && y == 10) {
                             console.log(x + ";" + y + ": " + image[x][y][0] + "," + image[x][y][1] + "," + image[x][y][2] + "," + image[x][y][3]);
-                        }
+                        }*/
 
                         var r = image[x][y][0];
                         var g = image[x][y][1];

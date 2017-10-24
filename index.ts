@@ -15,7 +15,7 @@ var initData = {
     charSize: 3
 };
 
-let p = new program(initData.popSize, initData.charSize);
+let p;
 
 let Generation = require('./Individual.js');
 var gen = React.createElement(Generation, {
@@ -67,6 +67,7 @@ app.use('/createGeneration', function (req, res) {
 });
 
 app.use('/', function (req, res) {
+    p = new program(initData.popSize, initData.charSize);
 
     res.setHeader('Content-Type', 'text/html');
     res.end(React.renderToStaticMarkup(React.DOM.body(null, React.DOM.div({

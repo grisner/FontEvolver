@@ -4,37 +4,65 @@ var b = require("./backend");
 var evolution = /** @class */ (function () {
     function evolution() {
     }
+    evolution.prototype.arrayEquals = function (a, b) {
+        if (a.length != b.length)
+            return false;
+        for (var i = 0, l = a.length; i < l; i++) {
+            // Check if we have nested arrays
+            if (a[i] instanceof Array && b[i] instanceof Array) {
+                // recurse into the nested arrays
+                if (!this.arrayEquals(a[i], b[i]))
+                    return false;
+            }
+            else if (a[i] != b[i]) {
+                // Warning - two different object instances will never be equal: {x:20} != {x:20}
+                return false;
+            }
+        }
+        return true;
+    };
     // creating offspring based on parents
     evolution.prototype.breed = function (p) {
         var parent1 = p.parent1;
         var parent2 = p.parent2;
         var child = new b.individual(p.parent1.characters.length);
         for (var c = 0; c < child.characters.length; c++) {
-            var chunkX = Math.floor(Math.random() * 9 + 1);
+            //let chunkX = Math.floor(Math.random() * 9 + 1);
+            var chunkX = 1;
             for (var y = 0; y < parent1.characters[0].sizeY; y++) {
                 for (var x = 0; x < parent1.characters[0].sizeX; x += chunkX) {
                     var chance = Math.random() * 20 | 0;
                     var template = void 0;
-                    switch (true) {
-                        case (chance < 9):
-                            template = parent1.characters[c].image[x][y];
-                            break;
-                        case (chance < 18):
-                            template = parent2.characters[c].image[x][y];
-                            break;
-                        /*case (chance < 19):
-                            let r = Math.random() * 256 | 0;
-                            let g = Math.random() * 256 | 0;
-                            let b = Math.random() * 256 | 0;
-                            let a = Math.random() * 256 | 0;
-                            template = [r,g,b,a];
-                            break;
-                        */
-                        default:
-                            template = [0, 0, 0, 255];
+                    var p1 = parent1.characters[c].image[x][y];
+                    var p2 = parent2.characters[c].image[x][y];
+                    var white = [256, 256, 256, 256];
+                    //console.log( p1 + ' / ' + p2);
+                    if (this.arrayEquals(p1, white) && this.arrayEquals(p2, white)) {
+                        //console.log('moving on');
                     }
-                    for (var spanx = x; spanx < x + chunkX; spanx++) {
-                        child.characters[c].image[x][y] = template;
+                    else {
+                        //console.log('fiddlin pixel');
+                        if (chance < 10) {
+                            var newNeighbourX = x + Math.floor(Math.random() * 3) - 1;
+                            var newNeighbourY = y + Math.floor(Math.random() * 3) - 1;
+                            if (newNeighbourX < 0) {
+                                newNeighbourX = 0;
+                            }
+                            else if (newNeighbourX > 99) {
+                                newNeighbourX = 99;
+                            }
+                            if (newNeighbourY < 0) {
+                                newNeighbourY = 0;
+                            }
+                            else if (newNeighbourY > 99) {
+                                newNeighbourY = 99;
+                            }
+                            child.characters[c].image[x][y] = [0, 0, 0, 256];
+                            child.characters[c].image[newNeighbourX][newNeighbourY] = [0, 0, 0, 256];
+                        }
+                        else if (chance > 9) {
+                            child.characters[c].image[x][y] = [256, 256, 256, 256];
+                        }
                     }
                 }
             }

@@ -1,6 +1,5 @@
 "use strict";
 
-
 import * as b from "./backend"
 // import {program} from "./backend"
 
@@ -9,8 +8,27 @@ import * as interfaces from './interfaces'
 export class evolution {
     constructor() {}
 
+    arrayEquals(a: any, b: any) {
+        if (a.length != b.length)
+            return false;
+
+        for (var i = 0, l=a.length; i < l; i++) {
+            // Check if we have nested arrays
+            if (a[i] instanceof Array && b[i] instanceof Array) {
+                // recurse into the nested arrays
+                if (!this.arrayEquals(a[i], b[i]))
+                    return false;
+            }           
+            else if (a[i] != b[i]) { 
+                // Warning - two different object instances will never be equal: {x:20} != {x:20}
+                return false;
+            }           
+        }       
+        return true;
+    }
+
+
     // creating offspring based on parents
-    
     breed(p: interfaces.IBreed) {
         
         let parent1: b.individual = p.parent1;
@@ -21,36 +39,42 @@ export class evolution {
         
         
         for(let c = 0; c < child.characters.length; c++) {
-            let chunkX = Math.floor(Math.random() * 9 + 1);
+            //let chunkX = Math.floor(Math.random() * 9 + 1);
+            let chunkX = 1;
 
             for(let y = 0; y < parent1.characters[0].sizeY; y++) {
                 for(let x = 0; x < parent1.characters[0].sizeX; x+=chunkX) {
                     let chance: number = Math.random() * 20 | 0;
                     let template: any;
-                
-                    switch(true) {
-                        case (chance < 9):
-                            template = parent1.characters[c].image[x][y];
-                            break;
 
-                        case (chance < 18):
-                            template = parent2.characters[c].image[x][y];
-                            break;
+                    let p1 = parent1.characters[c].image[x][y];
+                    let p2 =  parent2.characters[c].image[x][y];
+                    let white = [256,256,256,256];
 
-                        /*case (chance < 19):
-                            let r = Math.random() * 256 | 0;
-                            let g = Math.random() * 256 | 0;
-                            let b = Math.random() * 256 | 0;
-                            let a = Math.random() * 256 | 0;
-                            template = [r,g,b,a];
-                            break;
-                        */
-                        default:
-                            template = [0,0,0,255];
+                    //console.log( p1 + ' / ' + p2);
+
+                    if(this.arrayEquals(p1, white) && this.arrayEquals(p2, white)) {
+                        //console.log('moving on');
                     }
+                    else {
+                        //console.log('fiddlin pixel');
+                        
+                        if(chance < 10) {
+                            
+                            let newNeighbourX = x +  Math.floor(Math.random() * 3) - 1;
+                            let newNeighbourY = y +  Math.floor(Math.random() * 3) - 1;
 
-                    for(let spanx = x; spanx < x + chunkX; spanx++) {
-                        child.characters[c].image[x][y] = template;
+                            if(newNeighbourX < 0) {newNeighbourX = 0}
+                            else if(newNeighbourX > 99) {newNeighbourX = 99}
+                            if(newNeighbourY < 0) {newNeighbourY = 0}
+                            else if(newNeighbourY > 99) {newNeighbourY = 99}
+                            
+                            child.characters[c].image[x][y] = [0,0,0,256];
+                            child.characters[c].image[newNeighbourX][newNeighbourY] = [0,0,0,256];
+                        }
+                        else if(chance > 9) {
+                            child.characters[c].image[x][y] = [256,256,256,256];
+                        }
                     }
 
                 }
