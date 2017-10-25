@@ -94,6 +94,7 @@ export class evolution {
         var newGen: b.generation = new b.generation(popSize, oldGen.population[0].characters.length);
         
         // random behaviour
+        // TODO: let prio influence the choice of partners
         for(let n = 0; n<popSize; n++) {
             // randomize parents
             let parent1ID = Math.floor(Math.random() * popSize);
@@ -107,7 +108,6 @@ export class evolution {
             
             newGen.population[n] = this.breed({parent1,parent2});            
             //newGen.population[1] = this.breed({parent2,parent1});            
-            
         }
 
         return newGen;

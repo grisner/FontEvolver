@@ -59,6 +59,7 @@ export class character {
 
 export class individual {
     characters: Array<character>;
+    prio: number;
 
     constructor(charSize: number) {
         
@@ -102,7 +103,6 @@ export class generation {
             }
         }
     }
-
 }
 
 
@@ -128,6 +128,10 @@ export class program {
             //console.log(this.gen.population[0].characters[0].image[50][50] + " / " + this.gen.population[1].characters[0].image[50][50] + " => " + newGen[0].characters[0].image[50][50]);
             this.counter++;
             console.log(this.counter);
+            this.gen = this.evo.nextGeneration({oldGen: this.gen});
+            //console.log(this.gen.population[0].characters[0].image[50][50] + " / " + this.gen.population[1].characters[0].image[50][50] + " => " + newGen[0].characters[0].image[50][50]);
+            this.counter++;
+            console.log(this.counter);
         });   
     }
 
@@ -146,6 +150,11 @@ export class program {
         this.gen = this.evo.nextGeneration({oldGen: this.gen});
         this.counter++;
         console.log(this.counter);
+    }
+
+    setPrio(individual: number, prio: number) {
+        this.gen.population[individual].prio = prio;
+        console.log('prio rising: ' + individual);
     }
     
 }

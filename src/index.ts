@@ -55,6 +55,10 @@ app.get('/getCharacterImage&:individualID&:characterID&:el', function (req, res)
     res.send(result);
 });
 
+app.post('/setPrio', function(req, res){
+    
+});
+
 // Frontend
 app.use('/createGeneration', function (req, res) {
     res.setHeader('content-type', 'application/javascript');

@@ -36,14 +36,20 @@ var Individual = React.createClass({
         key: React.PropTypes.string
     },
 
+    setPrio: function(event) {
+        frontend.setPrio(event.target.id.substring(5,event.target.id.length), event.target.value);
+    },
+
     render: function () {
         var chars;
         for(let i=0; i < this.props.Characters.length; i++) {
             chars += <td>this.props.Characters[i]</td>;
         }
 
+        let id = "rank." + this.props.id;
+
         return (
-            <div>{this.props.Characters}<td><input type="checkbox" id={"box." + this.props.id} key={"box." + this.props.id}></input></td></div>
+            <div>{this.props.Characters}<td><input type="number" id={id} key={id} onChange={this.setPrio} ></input></td></div>
         );
     }
 });
@@ -72,9 +78,11 @@ var Generation = React.createClass({
 
         for(let i=0; i < popAmount; i++) {
             var chars = new Array(this.props.charSize);
+            
 
             for(let c=0; c < this.props.charSize; c++) {
-                var char = <Character key={"Char."+ i.toString() + "." + c.toString()} id={"Char."+ i.toString() + "." + c.toString()} />;
+                let id = "Char."+ i.toString() + "." + c.toString();
+                var char = <Character key={id} id={id} />;
                 chars[c] = char;
             }
             
@@ -97,9 +105,10 @@ var Generation = React.createClass({
     },
 
     render: function () {
-        // <script>window.onload({frontend.drawImages}())</script>
+        
         return (
             <div>
+                <script>window.onload({frontend.redraw}())</script>
                 <table>
                     <tr>
                         <td key="clickcell">

@@ -16,6 +16,16 @@ var Get= function(URL, callbackFn) {
     xhttp.send();
 };
 
+var Post= function(URL, parameters, callbackFn) {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = callbackFn;
+    xhttp.setRequestHeader("Content-type", "application/json");
+    xhttp.open("Post", URL, true);
+    
+    jsonObject = JSON.stringify(parameters);
+    xhttp.send(jsonObject);
+};
+
 var updateScreen= function() {
     // is run in frontend
     console.log('drawImages');
