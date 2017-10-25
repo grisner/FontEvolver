@@ -8,9 +8,9 @@
             "type": "node",
             "request": "launch",
             "name": "Launch Program",
-            "program": "${workspaceFolder}/bin/index.js",
+            "program": "${workspaceFolder}/index.js",
             "outFiles": [
-                "${workspaceFolder}/src/**/*.js"
+                "${workspaceFolder}/**/*.js"
             ]
         }
     ]
