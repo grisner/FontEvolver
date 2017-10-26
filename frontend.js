@@ -1,5 +1,5 @@
 
-var backendURL = "http://127.0.0.1:8000";
+var backendURL = "http://localhost:8000";
 
 var setPixel= function(imageData, x, y, r, g, b, a) {
     var index = (x + y * imageData.width) * 4;
@@ -16,15 +16,18 @@ var Get= function(URL, callbackFn) {
     xhttp.send();
 };
 
-var Post= function(URL, parameters, callbackFn) {
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = callbackFn;
-    xhttp.setRequestHeader("Content-type", "application/json");
-    xhttp.open("Post", URL, true);
-    
-    jsonObject = JSON.stringify(parameters);
-    xhttp.send(jsonObject);
-};
+var Post= function(URL, params, callbackFn) {
+	var data = JSON.stringify(params);
+
+	var http = new XMLHttpRequest();
+	http.open("POST", URL, true);
+
+	//Send the proper header information along with the request
+	http.setRequestHeader("Content-type", "application/json");
+
+	http.onreadystatechange = callbackFn;
+	http.send(data);
+}
 
 var updateScreen= function() {
     // is run in frontend
@@ -101,7 +104,8 @@ module.exports = {
     tick: function() {
         var url = backendURL + "/tick";
         Get(url, function(){
-            updateScreen();
+            // updateScreen();
+            redraw();
         });
     },
 
@@ -119,6 +123,21 @@ module.exports = {
 
     redraw: function() {
         updateScreen();
+    },
+
+    setPrio: function(id, value) {
+
+        console.log('sending ' + id + "," + value);
+        var params = {
+            id: id,
+            prio: value
+        };
+        console.log(params);
+
+        var url = backendURL + "/setPrio";
+
+        Post(url, params, function(data) {
+        });
     }
 }
 

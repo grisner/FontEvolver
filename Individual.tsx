@@ -37,6 +37,7 @@ var Individual = React.createClass({
     },
 
     setPrio: function(event) {
+        console.log('calling setPrio on ' + event.target.id.substring(5,event.target.id.length);
         frontend.setPrio(event.target.id.substring(5,event.target.id.length), event.target.value);
     },
 

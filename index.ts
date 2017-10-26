@@ -5,6 +5,7 @@ var browserify = require('browserify');
 var React = require('react');
 var jsx = require('node-jsx');
 var app = express();
+var bodyParser = require('body-parser');
 jsx.install();
 
 import { program } from "./backend";
@@ -22,6 +23,9 @@ var gen = React.createElement(Generation, {
     id: "gen1",
     genNum: "1"
 });
+
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 app.use('/runEvolution', function(req, res) {
     p.start();
@@ -53,10 +57,16 @@ app.get('/getCharacterImage&:individualID&:characterID&:el', function (req, res)
     };
 
     res.send(result);
-});
+    res.end();
+}); 
 
 app.post('/setPrio', function(req, res){
+    console.log(req);
+    console.log('setting prio to ' + req.body.prio + ' for ' + req.body.id);
+    p.setPrio(req.body.id, req.body.prio);
     
+    
+    res.end();
 });
 
 // Frontend

@@ -153,8 +153,9 @@ export class program {
     }
 
     setPrio(individual: number, prio: number) {
-        this.gen.population[individual].prio = prio;
         console.log('prio rising: ' + individual);
+        this.gen.population[individual].prio = prio;
+        
     }
     
 }
