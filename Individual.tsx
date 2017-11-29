@@ -1,9 +1,9 @@
 "use strict";
 
-var React = require('react');
-var frontend = require('./frontend.js');
+let React = require('react');
+let frontend = require('./frontend.js');
 
-var Character = React.createClass({
+let Character = React.createClass({
     propTypes: {
         id: React.PropTypes.string,
         image: React.PropTypes.array,
@@ -29,7 +29,7 @@ var Character = React.createClass({
 });
 
 
-var Individual = React.createClass({
+let Individual = React.createClass({
     propTypes: {
         id: React.PropTypes.string,
         Characters: React.PropTypes.array,
@@ -37,12 +37,12 @@ var Individual = React.createClass({
     },
 
     setPrio: function(event) {
-        console.log('calling setPrio on ' + event.target.id.substring(5,event.target.id.length);
+        console.log('calling setPrio on ' + event.target.id.substring(5,event.target.id.length));
         frontend.setPrio(event.target.id.substring(5,event.target.id.length), event.target.value);
     },
 
     render: function () {
-        var chars;
+        let chars;
         for(let i=0; i < this.props.Characters.length; i++) {
             chars += <td>this.props.Characters[i]</td>;
         }
@@ -50,7 +50,7 @@ var Individual = React.createClass({
         let id = "rank." + this.props.id;
 
         return (
-            <div>{this.props.Characters}<td><input type="number" id={id} key={id} onChange={this.setPrio} ></input></td></div>
+            <div>{this.props.Characters}<td><input type="number" id={id} key={id} onChange={this.setPrio}></input></td></div>
         );
     }
 });
@@ -58,7 +58,7 @@ var Individual = React.createClass({
 module.exports = Individual;
 
 
-var Generation = React.createClass({
+let Generation = React.createClass({
     propTypes: {
         id: React.PropTypes.string,
         Individuals: React.PropTypes.array,
@@ -74,16 +74,16 @@ var Generation = React.createClass({
             popAmount = 10;
         }
         
-        var ppl = new Array(popAmount);
+        let ppl = new Array(popAmount);
         let row: any;
 
         for(let i=0; i < popAmount; i++) {
-            var chars = new Array(this.props.charSize);
+            let chars = new Array(this.props.charSize);
             
 
             for(let c=0; c < this.props.charSize; c++) {
                 let id = "Char."+ i.toString() + "." + c.toString();
-                var char = <Character key={id} id={id} />;
+                let char = <Character key={id} id={id} />;
                 chars[c] = char;
             }
             

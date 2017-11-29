@@ -46,7 +46,7 @@ export class character {
 
 
     StartData(index: number) {
-        var s = new startPos();
+        let s = new startPos();
         this.image = s.getStartData(index);
         if(index == 1) {console.log("after getStartData: " + this.image[50][10]);}
     }
@@ -65,9 +65,11 @@ export class individual {
         
         this.characters = new Array(charSize);
         for(let i=0; i < charSize; i++) {
-            var c = new character(100,100);
+            let c = new character(100,100);
             this.characters[i] = c;
         }
+
+        this.prio = 0;
     }
 
     getCharacterImage(characterID: number) {
@@ -83,7 +85,7 @@ export class generation {
         this.population = new Array(popSize);
 
         for(let i=0; i < popSize; i++) {
-            var ind = new individual(charSize);
+            let ind = new individual(charSize);
             this.population[i] = ind;
         }
 
@@ -92,12 +94,10 @@ export class generation {
 
     newGeneration() {
         //console.log('new generation');
-        for(var i in this.population) {
+        for(let i in this.population) {
             let ind = this.population[i];
             for(let c = 0; c < ind.characters.length; c++) {
-            //for(var c in ind.characters) {
                 let char = ind.characters[c];
-                //char.createRandomData();
                 console.log('creating start pattern for ' + c.toString());
                 char.StartData(c);
             }

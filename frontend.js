@@ -1,49 +1,52 @@
+"use strict";
 
-var backendURL = "http://localhost:8000";
+let backendURL = "http://127.0.0.1:8000";
 
-var setPixel= function(imageData, x, y, r, g, b, a) {
-    var index = (x + y * imageData.width) * 4;
+let setPixel= function(imageData, x, y, r, g, b, a) {
+    let index = (x + y * imageData.width) * 4;
     imageData.data[index + 0] = r;
     imageData.data[index + 1] = g;
     imageData.data[index + 2] = b;
     imageData.data[index + 3] = a;
 };
 
-var Get= function(URL, callbackFn) {
-    var xhttp = new XMLHttpRequest();
+let Get= function(URL, callbackFn) {
+    let xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = callbackFn;
     xhttp.open("GET", URL, true);
     xhttp.send();
 };
 
-var Post= function(URL, params, callbackFn) {
-	var data = JSON.stringify(params);
-
-	var http = new XMLHttpRequest();
-	http.open("POST", URL, true);
-
-	//Send the proper header information along with the request
-	http.setRequestHeader("Content-type", "application/json");
+let Put= function(URL, params, callbackFn) {
+	let data = JSON.stringify(params);
+    let http = new XMLHttpRequest();
+    
+    http.open("PUT", URL, true);
+    
+    //Send the proper header information along with the request
+    http.setRequestHeader("Content-type", "application/json");
+    http.setRequestHeader("Content-length", data.length);
 
 	http.onreadystatechange = callbackFn;
-	http.send(data);
+    http.send(data);
+    
 }
 
-var updateScreen= function() {
+let updateScreen= function() {
     // is run in frontend
     console.log('drawImages');
 
-    var elements = document.getElementsByTagName('canvas');
+    let elements = document.getElementsByTagName('canvas');
     
-    for(var el=0; el < elements.length; el++) {
+    for(let el=0; el < elements.length; el++) {
         
-    // for (var el in elements) {
-        var element = elements[el];
-        var ID = element.id.split('.')[2]
-        var charID = element.id.split('.')[3]
+    // for (let el in elements) {
+        let element = elements[el];
+        let ID = element.id.split('.')[2]
+        let charID = element.id.split('.')[3]
 
         // Get data from the right character
-        var url = backendURL + "/GetCharacterImage&" + ID + "&" + charID + "&" + el
+        let url = backendURL + "/GetCharacterImage&" + ID + "&" + charID + "&" + el
         //console.log(el + ' | ' + url);
 
         Get(url, function(data) {
@@ -60,25 +63,25 @@ var updateScreen= function() {
                     return;
                 }
 
-                var element = elements[response.el];
-                var c = element.getContext('2d');
-                var width = c.canvas.width;
-                var height = c.canvas.height;
+                let element = elements[response.el];
+                let c = element.getContext('2d');
+                let width = c.canvas.width;
+                let height = c.canvas.height;
 
                 // create a new pixel array
-                var imageData = c.createImageData(width, height);
-                var image = response.image;
+                let imageData = c.createImageData(width, height);
+                let image = response.image;
 
-                for(var y=0; y < 100; y++) {
-                    for(var x=0; x < 100; x++) {
+                for(let y=0; y < 100; y++) {
+                    for(let x=0; x < 100; x++) {
                         /*if(x == 50 && y == 10) {
                             console.log(x + ";" + y + ": " + image[x][y][0] + "," + image[x][y][1] + "," + image[x][y][2] + "," + image[x][y][3]);
                         }*/
 
-                        var r = image[x][y][0];
-                        var g = image[x][y][1];
-                        var b = image[x][y][2];
-                        var a = image[x][y][3];
+                        let r = image[x][y][0];
+                        let g = image[x][y][1];
+                        let b = image[x][y][2];
+                        let a = image[x][y][3];
                         setPixel(imageData, x, y, r, g, b,a);
                     }
                 }
@@ -94,29 +97,36 @@ var updateScreen= function() {
                     
                 }*/
                 c.putImageData(imageData, 0, 0); // at coords 0,0
-                
             }
         });
+
+        // resetting all prios
+        let inputs = document.getElementsByTagName('input');
+        for(let i in inputs) {
+            if(inputs[i].type == 'number') {
+                inputs[i].value = 0;
+            }
+        }
     }
 };
 
 module.exports = {
     tick: function() {
-        var url = backendURL + "/tick";
+        let url = backendURL + "/tick";
         Get(url, function(){
-            // updateScreen();
-            redraw();
+            updateScreen();
+            //redraw();
         });
     },
 
     start: function() {
-        var url = backendURL + "/runEvolution";
+        let url = backendURL + "/runEvolution";
         Get(url, function(){console.log('started time');});
         window.t1 = setInterval(updateScreen, 150);
     },
 
     stop: function() {
-        var url =backendURL + "/stopEvolution";
+        let url =backendURL + "/stopEvolution";
         Get(url, function(){console.log('stopped time');});    
         clearInterval(window.t1);
     },
@@ -128,16 +138,14 @@ module.exports = {
     setPrio: function(id, value) {
 
         console.log('sending ' + id + "," + value);
-        var params = {
+        let params = {
             id: id,
             prio: value
         };
-        console.log(params);
 
-        var url = backendURL + "/setPrio";
+        let url = backendURL + "/setPrio";
 
-        Post(url, params, function(data) {
-        });
+        Put(url, params, function(){});
     }
 }
 

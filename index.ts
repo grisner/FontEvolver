@@ -60,9 +60,7 @@ app.get('/getCharacterImage&:individualID&:characterID&:el', function (req, res)
     res.end();
 }); 
 
-app.post('/setPrio', function(req, res){
-    console.log(req);
-    console.log('setting prio to ' + req.body.prio + ' for ' + req.body.id);
+app.all('/setPrio', function(req, res){
     p.setPrio(req.body.id, req.body.prio);
     
     
@@ -82,7 +80,7 @@ app.use('/createGeneration', function (req, res) {
 
 app.use('/', function (req, res) {
     p = new program(initData.popSize, initData.charSize);
-
+    
     res.setHeader('Content-Type', 'text/html');
     res.end(React.renderToStaticMarkup(React.DOM.body(null, React.DOM.div({
         id: 'container',
@@ -103,17 +101,7 @@ var server = app.listen(8000, function () {
     console.log('Listening @ http://%s:%d', addr.address, addr.port);
 });
 
-// TO RUN DOCKER 
-// docker run -v /home/f2520233/DATA/source/HTML/FontEvolver:/FontEvolver -p 80:80 -it node:version2 /bin/bash 
 
-// Enter running container
-// docker exec -it 9b7b039fef39 /bin/bash
-
-// committing image
-// docker commit 9b7b039fef39 node:version2
-
-// running specific version of image
-// docker run -v $(pwd):/FontEvolver -p 80:80 -td node:version2 /bin/bash 
 
 
 

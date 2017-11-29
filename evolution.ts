@@ -12,7 +12,7 @@ export class evolution {
         if (a.length != b.length)
             return false;
 
-        for (var i = 0, l=a.length; i < l; i++) {
+        for (let i = 0, l=a.length; i < l; i++) {
             // Check if we have nested arrays
             if (a[i] instanceof Array && b[i] instanceof Array) {
                 // recurse into the nested arrays
@@ -84,14 +84,78 @@ export class evolution {
         return child;
     }
 
-
     // creating a new generation depending on rules
     nextGeneration(old: interfaces.INextGeneration) {
         console.log('next generation');
-        var oldGen = old.oldGen;
+        let oldGen = old.oldGen;
         
-        var popSize = oldGen.population.length
-        var newGen: b.generation = new b.generation(popSize, oldGen.population[0].characters.length);
+        let popSize = oldGen.population.length
+        let newGen: b.generation = new b.generation(popSize, oldGen.population[0].characters.length);
+
+        oldGen.population = oldGen.population.sort(function(a, b){
+            return b.prio - a.prio;
+        });
+
+        // Giving all individuals an extra point and calculating mean
+        let mean: number= 0;
+        for(let i in oldGen.population) {
+            if(typeof(oldGen.population[i].prio) == 'undefined' ) {
+                oldGen.population[i].prio = 0;
+            } 
+            oldGen.population[i].prio++;
+            mean += oldGen.population[i].prio;
+        }
+        mean = (oldGen.population.length*2)/mean;
+
+        // Calculate whom to breed with who
+        let parents1: Array<number> = [];
+        let parents2: Array<number> = [];
+
+        for(let i: number=0; i < oldGen.population.length; i++) {
+            let breedings:number = Math.floor(oldGen.population[i].prio * mean); // calculate amount of breedings per individual
+
+            for(let j:number=0; j < breedings; j++) {
+            
+                if(parents1.length < oldGen.population.length && i%2==0 ) {
+                    parents1.push(i);
+                }
+                else {
+                    parents2.push(i);
+                }
+            }
+        }
+
+        // if the parent lists haven't been filled, we fill
+        for(let i = parents1.length; i < oldGen.population.length; i++) {
+            parents1.push(Math.floor(Math.random() * oldGen.population.length));
+        }
+
+        for(let i = parents2.length; i < oldGen.population.length; i++) {
+            parents2.push(Math.floor(Math.random() * oldGen.population.length));
+        }
+
+        
+
+
+        // First we breed the lists with each other
+        for(let i: number = 0; i < parents1.length; i++) {
+            let parent1ID: number = parents1[i];
+            let parent2ID: number = parents2[i];
+
+            let parent1: b.individual = oldGen.population[parent1ID]; 
+            let parent2: b.individual = oldGen.population[parent2ID];
+            console.log('pairing ' + parent1ID + ' with ' + parent2ID);
+
+            
+            newGen.population[i] = this.breed({parent1,parent2});     
+        }
+
+
+        /*
+        // The last individual in the new generation is created new
+        let newInd: b.individual = new b.individual(oldGen.population[0].characters.length);
+        newGen.population[popSize-1] = newInd;
+
         
         // random behaviour
         // TODO: let prio influence the choice of partners
@@ -109,6 +173,7 @@ export class evolution {
             newGen.population[n] = this.breed({parent1,parent2});            
             //newGen.population[1] = this.breed({parent2,parent1});            
         }
+        */
 
         return newGen;
     }
